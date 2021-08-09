@@ -17,7 +17,7 @@ const options = {
 
 const swaggerSpec = swaggerJSDoc(options);
 
-const port = process.env.PORT || 9060;
+const port = process.env.PORT || 9050;
 
 const runningMessage = `${productName} Running on port ${port}.`;
 

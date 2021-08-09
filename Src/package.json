@@ -55,7 +55,7 @@
     ],
     "env": {
       "NODE_ENV": "development",
-      "PORT": 9060
+      "PORT": 9050
     }
   }
 }
