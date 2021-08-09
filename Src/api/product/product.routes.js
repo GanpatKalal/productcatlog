@@ -31,6 +31,7 @@ router.get('/', controller.getAllProducts);
  *         description: id of the product to retrieve.
  *         schema:
  *           type: integer
+ *           example: 1
  *     responses:
  *       200:
  *        description: Success
@@ -71,6 +72,7 @@ router.post('/', controller.createProduct);
  *         description: id of the product for updating the view count of product.
  *         schema:
  *           type: integer
+ *           example: 1
  *     responses:
  *       200:
  *        description: Success
@@ -90,6 +92,7 @@ router.put('/:id', controller.updateProductViewCount);
  *         description: id of the product for disabling the product.
  *         schema:
  *           type: integer
+ *           example: 1
  *     responses:
  *       200:
  *        description: Success
@@ -109,6 +112,7 @@ router.delete('/:id', controller.disableProduct);
  *         description: viewCount.
  *         schema:
  *           type: integer
+ *           example: 1
  *     responses:
  *       200:
  *        description: Success

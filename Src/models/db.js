@@ -9,10 +9,10 @@ let dbStorage;
 
 if (process.env.ENV === 'Test') {
   dbStorage = 'Test_db.sqlite';
-  console.log('This is a test');
+  console.log('This is a Test env.');
 } else {
   dbStorage = 'db.sqlite';
-  console.log('This is a Dev');
+  console.log('This is a development Env');
 }
 
 const sequelize = new Sequelize('db', 'user', 'pass', {

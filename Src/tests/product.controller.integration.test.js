@@ -8,7 +8,7 @@ process.env.PORT = 9050;
 chai.should();
 chai.use(chaihttp);
 
-describe('App route tests ', () => {
+describe.skip('App route tests ', () => {
   let agent;
   let db;
   let app;
@@ -22,6 +22,21 @@ describe('App route tests ', () => {
       res.should.have.status(200);
       done();
     });
+  });
+  it('should allow a product to be posted and create the new product', (done) => {
+    const newProduct = {  
+    name: 'Product_1',
+    price: 111,
+    description: 'Product 1 description' 
+   };
+
+    agent.post('/api/product')
+      .send(newProduct)
+      .expect(201)
+      .end((err, results) => {
+        results.body.should.have.property('productId');
+        done();
+      });
   });
   afterEach((done) => {
     console.log('afterEach done');

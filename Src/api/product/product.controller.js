@@ -22,6 +22,10 @@ function ProductController(Product = models.Product) {
   }
 
   function getProductById(req, res) {
+    if (!req.params.id) {
+      res.status(400);
+      return res.send('id is required');
+    }
     const { id } = req.params;
     console.log(`Request for productid ${id}.`);
     Product.findOne({
@@ -46,6 +50,22 @@ function ProductController(Product = models.Product) {
 
   function createProduct(req, res) {
     console.log('createProduct');
+    if (!req.body) {
+      res.status(400);
+      return res.send('request body is empty.');
+    }
+    if (!req.body.name) {
+      res.status(400);
+      return res.send('name is required in request body.');
+    }
+    if (!req.body.price) {
+      res.status(400);
+      return res.send('price is required in request body.');
+    }
+    if (!req.body.description) {
+      res.status(400);
+      return res.send('description is required in request body.');
+    }
     const newProduct = {
       name: req.body.name,
       price: req.body.price,
@@ -64,6 +84,10 @@ function ProductController(Product = models.Product) {
   }
 
   function updateProductViewCount(req, res) {
+    if (!req.params.id) {
+      res.status(400);
+      return res.send('id is required');
+    }
     const { id } = req.params;
     console.log(`Request for productid ${id}.`);
     models.Product.increment({ viewCount: +1 }, {
@@ -81,11 +105,15 @@ function ProductController(Product = models.Product) {
       })
       .catch((error) => {
         console.log(error);
-        res.status(404).send(error);
+        res.status(500).send(error);
       });
   }
 
   function disableProduct(req, res) {
+    if (!req.params.id) {
+      res.status(400);
+      return res.send('id is required');
+    }
     const { id } = req.params;
     console.log(`Request for productid ${id}.`);
     models.Product.update({ isDeleted: true, deletionDate: Date.now() }, {
@@ -109,6 +137,10 @@ function ProductController(Product = models.Product) {
   }
 
   function getMostViewProducts(req, res) {
+    if (!req.params.viewCount) {
+      res.status(400);
+      return res.send('viewCount is required');
+    }
     const { viewCount } = req.params;
     console.log(`Request for productid ${viewCount}.`);
     Product.findAll({
