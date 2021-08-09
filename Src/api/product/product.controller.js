@@ -2,105 +2,142 @@ const { Op } = require('sequelize');
 
 const models = require('../../models/db');
 
-exports.getAllProducts = (req, res) => {
-  models.Product.findAll({
-    where: {
-      isDeleted: false
-    }
-  })
-    .then((products) => {
-      res.json(products);
+function ProductController(Product = models.Product) {
+  function getAllProducts(req, res) {
+    console.log('getAllProducts call');
+    Product.findAll({
+      where: {
+        isDeleted: false
+      }
     })
-    .catch((error) => {
-      console.log(error);
-      res.status(404).send(error);
-    });
-};
+      .then((products) => {
+        res.status = 200;
+        return res.json(products);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500);
+        return res.json(error);
+      });
+  }
 
-exports.createProduct = (req, res) => {
-  const newProduct = req.body;
-  console.log(`Request for new product ${newProduct}.`);
-  models.Product.create({
-    name: newProduct.name,
-    price: newProduct.price,
-    description: newProduct.description
-  })
-    .then((product) => {
-      res.status(201).send(product);
+  function getProductById(req, res) {
+    const { id } = req.params;
+    console.log(`Request for productid ${id}.`);
+    Product.findOne({
+      where: {
+        productId: id
+      }
     })
-    .catch((error) => {
-      console.log(error);
-      res.status(404).send(error);
-    });
-};
+      .then((product) => {
+        if (!product) {
+          res.status(404);
+          return res.json(`Failed to get the productid: ${id}`);
+        }
+        res.status = 200;
+        return res.json(product);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500);
+        return res.json(error);
+      });
+  }
 
-exports.getProductById = (req, res) => {
-  const { id } = req.params;
-  console.log(`Request for productid ${id}.`);
-  models.Product.findOne({
-    where: {
-      uuid: id
-    }
-  })
-    .then((product) => {
-      res.status(200).send(product);
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(404).send(error);
-    });
-};
+  function createProduct(req, res) {
+    console.log('createProduct');
+    const newProduct = {
+      name: req.body.name,
+      price: req.body.price,
+      description: req.body.description
+    };
+    Product.create(newProduct)
+      .then((product) => {
+        res.status(201);
+        return res.json(product);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500);
+        return res.json(error);
+      });
+  }
 
-exports.updateProductViewCount = (req, res) => {
-  const { id } = req.params;
-  console.log(`Request for productid ${id}.`);
-  models.Product.increment({ viewCount: +1 }, {
-    where: {
-      uuid: id
-    }
-  })
-    .then((product) => {
-      res.status(200).send(product);
+  function updateProductViewCount(req, res) {
+    const { id } = req.params;
+    console.log(`Request for productid ${id}.`);
+    models.Product.increment({ viewCount: +1 }, {
+      where: {
+        productId: id
+      }
     })
-    .catch((error) => {
-      console.log(error);
-      res.status(404).send(error);
-    });
-};
+      .then((product) => {
+        if (product[0][1] === 0) {
+          res.status(404);
+          return res.json(`Failed to update the view count of the productid: ${id}`);
+        }
+        res.status = 200;
+        return res.json(`The productid: ${id} is updated.`);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(404).send(error);
+      });
+  }
 
-exports.disableProduct = (req, res) => {
-  const { id } = req.params;
-  console.log(`Request for productid ${id}.`);
-  models.Product.update({ isDeleted: true, deletionDate: Date.now() }, {
-    where: {
-      uuid: id
-    }
-  })
-    .then((product) => {
-      res.status(200).send(product);
+  function disableProduct(req, res) {
+    const { id } = req.params;
+    console.log(`Request for productid ${id}.`);
+    models.Product.update({ isDeleted: true, deletionDate: Date.now() }, {
+      where: {
+        productId: id
+      }
     })
-    .catch((error) => {
-      console.log(error);
-      res.status(404).send(error);
-    });
-};
+      .then((product) => {
+        if (product[0] === 0) {
+          res.status(404);
+          return res.json(`Failed to disable the productid: ${id}`);
+        }
+        res.status = 200;
+        return res.json(`The productid: ${id} is disabled.`);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500);
+        return res.json(error);
+      });
+  }
 
-exports.getMostViewProducts = (req, res) => {
-  const { viewCount } = req.params;
-  console.log(`Request for productid ${viewCount}.`);
-  models.Product.findAll({
-    where: {
-      viewCount: {
-        [Op.gte]: viewCount
-      },
-      isDeleted: false,
-    }
-  })
-    .then((products) => {
-      res.json(products);
+  function getMostViewProducts(req, res) {
+    const { viewCount } = req.params;
+    console.log(`Request for productid ${viewCount}.`);
+    Product.findAll({
+      where: {
+        viewCount: {
+          [Op.gte]: viewCount
+        },
+        isDeleted: false,
+      }
     })
-    .catch((error) => {
-      console.log(error);
-      res.status(404).send(error);
-    });
-};
+      .then((products) => {
+        res.status = 200;
+        return res.json(products);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500);
+        return res.json(error);
+      });
+  }
+
+  return {
+    getAllProducts,
+    createProduct,
+    getProductById,
+    updateProductViewCount,
+    disableProduct,
+    getMostViewProducts
+  };
+}
+
+module.exports = ProductController;

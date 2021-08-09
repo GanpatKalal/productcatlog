@@ -1,10 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
   const Product = sequelize.define('Product', {
-    uuid: {
-      type: DataTypes.UUID,
+    productId: {
+      type: DataTypes.INTEGER,
       primaryKey: true,
-      allowNull: false,
-      defaultValue: DataTypes.UUIDV4
+      autoIncrement: true,
     },
     name: {
       type: DataTypes.STRING,
